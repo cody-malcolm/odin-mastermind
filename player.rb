@@ -4,20 +4,20 @@ require_relative 'output'
 
 # "Abstract" superclass for HumanPlayer and CPUPlayer
 class Player
+  include Output
+
   def initialize(max_guesses)
     @max_guesses = max_guesses
     @num_guesses = 0
   end
 
-  def pick_code; end
-
-  def guess_code; end
+  def guesses_left?
+    @num_guesses < @max_guesses
+  end
 end
 
 # Implements Human-specific functionalities
 class HumanPlayer < Player
-  include Output
-
   def initialize
     super(8)
   end
@@ -41,15 +41,9 @@ class HumanPlayer < Player
     guess
   end
 
-  def guesses_left?
-    @num_guesses < @max_guesses
-  end
-
   def print_end_message(successful, code)
     if successful
-      print_message(%i[green blinking], "#{' ' * 12}***")
-      print_message(%i[green], 'CONGRATULATIONS!')
-      put_message(%i[green blinking], '***')
+      print_congratulations
       puts "#{' ' * 10}You broke the secret code!\n\n"
     else
       print "Sorry, you were unsuccessful breaking the code. Better luck next time!\nThe secret code was: "
@@ -91,12 +85,30 @@ class CPUPlayer < Player
     end
   end
 
+  def print_end_message(successful, _)
+    if successful
+      put_message(%i[red], 'The computer broke your code!')
+    else
+      print_congratulations
+      puts 'The computer was unable to break your code!'
+    end
+    puts ''
+  end
+
+  protected
+
   def pick_code(min_unique)
     code = "#{rand(1..6)}#{rand(1..6)}#{rand(1..6)}#{rand(1..6)}"
     code.chars.uniq.length >= min_unique ? code : pick_code
   end
 
-  def guess_code; end
+  def guess_code(code)
+    @num_guesses += 1
+
+    print "The computer guessed:#{' ' * 6}"
+    print_full_code(code)
+    code
+  end
 end
 
 # A fairly naive AI
@@ -110,7 +122,7 @@ class NormalCPUPlayer < CPUPlayer
   end
 
   def guess_code
-    '2222'
+    super('2222')
   end
 end
 
@@ -125,7 +137,7 @@ class StrongCPUPlayer < CPUPlayer
   end
 
   def guess_code
-    '2222'
+    super('2222')
   end
 end
 
@@ -140,6 +152,6 @@ class ExpertCPUPlayer < CPUPlayer
   end
 
   def guess_code
-    '2222'
+    super('2222')
   end
 end

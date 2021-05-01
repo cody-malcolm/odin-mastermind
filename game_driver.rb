@@ -18,8 +18,6 @@ class GameDriver
 
     prompt_for_game_type until @quit
 
-    puts ''
-
     say_goodbye
   end
 
@@ -49,10 +47,12 @@ class GameDriver
     strength = prompt_for_selection(%i[n s e], prompt)
     computer = CPUPlayer.new_cpu(strength)
     puts ''
+    selection = prompt_for_selection(%i[c b], 'Would you like to (c)reate the secret code, or (b)reak it? (c/b): ')
+    puts ''
 
     player = HumanPlayer.new
 
-    game = Game.new(computer, player)
+    game = selection == :b ? Game.new(computer, player) : Game.new(player, computer)
 
     game.play
   end

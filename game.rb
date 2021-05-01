@@ -19,6 +19,7 @@ class Game
       hint = @code.check(guess)
       display_hint(hint)
       guessed = guess_correct?(hint)
+      sleep(1.5) if @player.is_a?(CPUPlayer)
     end
 
     @player.print_end_message(guessed, @code.code)

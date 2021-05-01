@@ -103,6 +103,12 @@ module Output
     puts ''
   end
 
+  def print_congratulations
+    print_message(%i[green blinking], "#{' ' * 12}***")
+    print_message(%i[green], 'CONGRATULATIONS!')
+    put_message(%i[green blinking], '***')
+  end
+
   def game_overview
     <<~OVERVIEW
       In Mastermind, you play against the computer to see who is better at breaking a secret code.
