@@ -7,15 +7,18 @@ require_relative 'game'
 # manages the flow of the application
 class GameDriver
   include Output
+  def initialize
+    @quit = false
+  end
 
   def run
     print_welcome_banner
 
     offer_explanation
 
-    quit = false
+    prompt_for_game_type until @quit
 
-    quit = prompt_for_game_type? until quit
+    puts ''
 
     say_goodbye
   end
@@ -27,12 +30,14 @@ class GameDriver
     puts selection == :y ? "\n#{explanation}" : "\n"
   end
 
-  def prompt_for_game_type?
-    print "For now, press 'y' to quit: "
-    selection = gets.chomp
+  def prompt_for_game_type
+    selection = prompt_for_selection(%i[s m q], 'Would you like a (s)ingle game, a (m)atch, or to (q)uit? (s/m/q): ')
     puts ''
-    setup_single_game unless selection == 'y'
-    selection == 'y'
+    case selection
+    when :s then setup_single_game
+    when :m then setup_match
+    when :q then @quit = true
+    end
   end
 
   def say_goodbye
@@ -40,12 +45,20 @@ class GameDriver
   end
 
   def setup_single_game
-    computer = CPUPlayer.new
+    prompt = 'Would you like to play against a (n)ormal, (s)trong, or (e)xpert computer? (n/s/e): '
+    strength = prompt_for_selection(%i[n s e], prompt)
+    computer = CPUPlayer.new_cpu(strength)
+    puts ''
+
     player = HumanPlayer.new
 
     game = Game.new(computer, player)
 
     game.play
+  end
+
+  def setup_match
+    puts 'setting up a new match'
   end
 
   def prompt_for_selection(options, prompt)

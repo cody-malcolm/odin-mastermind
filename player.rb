@@ -83,12 +83,60 @@ end
 
 # Implements CPU-specific functionalities
 class CPUPlayer < Player
+  def self.new_cpu(strength)
+    case strength
+    when :n then NormalCPUPlayer.new
+    when :s then StrongCPUPlayer.new
+    when :e then ExpertCPUPlayer.new
+    end
+  end
+
+  def pick_code(min_unique)
+    code = "#{rand(1..6)}#{rand(1..6)}#{rand(1..6)}#{rand(1..6)}"
+    code.chars.uniq.length >= min_unique ? code : pick_code
+  end
+
+  def guess_code; end
+end
+
+# A fairly naive AI
+class NormalCPUPlayer < CPUPlayer
   def initialize
-    super(num_guesses: 4)
+    super(12)
   end
 
   def pick_code
-    "#{rand(1..6)}#{rand(1..6)}#{rand(1..6)}#{rand(1..6)}"
+    super(2)
+  end
+
+  def guess_code
+    '2222'
+  end
+end
+
+# A moderately strong AI
+class StrongCPUPlayer < CPUPlayer
+  def initialize
+    super(8)
+  end
+
+  def pick_code
+    super(3)
+  end
+
+  def guess_code
+    '2222'
+  end
+end
+
+# An AI that always solves the code in 5 or fewer turns
+class ExpertCPUPlayer < CPUPlayer
+  def initialize
+    super(5)
+  end
+
+  def pick_code
+    super(4)
   end
 
   def guess_code
