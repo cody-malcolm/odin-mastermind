@@ -70,6 +70,7 @@ module Output
 
   def print_full_code(code)
     code.chars.each { |c| print_code(c) } # TODO: look into why (&:print_code) doesn't pass argument
+    puts ''
   end
 
   # prints the code with a colored background, and a space following it
@@ -78,13 +79,11 @@ module Output
     print ' '
   end
 
-  def print_direct_match
-    print "\e[7m \e[0m"
-    print ' '
-  end
-
-  def print_indirect_match
-    print '[]'
-    print ' '
+  def display_hint(hint)
+    print 'The hint for that guess is: '
+    hint[:direct].times { print "\u25C6 " }
+    hint[:indirect].times { print "\u25C7 " }
+    (4 - hint[:direct] - hint[:indirect]).times { print "\u00D7 " }
+    puts "\n\n"
   end
 end

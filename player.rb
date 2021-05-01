@@ -24,17 +24,17 @@ class HumanPlayer < Player
   end
 
   def guess_code
-    @num_guesses += 1 if guesses_left?
+    @num_guesses += 1
 
-    if last_guess?
-      print_message(%i[orange blinking underline], 'Warning')
-      puts ': Last guess!'
-    else
-      print_message(%i[underline], "Guess ##{@num_guesses}")
-      puts ': Please enter a guess (eg. 2345)'
+    guess = prompt_for_guess
+
+    until valid_guess?(guess)
+      puts "That wasn't a valid guess! Guesses should be 4 digits and contain only the numbers 1-6."
+      guess = prompt_for_guess
     end
-
-    gets.chomp
+    print "Your guess:#{' ' * 10}"
+    print_full_code(guess)
+    guess
   end
 
   def guesses_left?
@@ -43,10 +43,10 @@ class HumanPlayer < Player
 
   def print_end_message(successful, code)
     if successful
-      print_message(%i[green blinking], '**')
+      print_message(%i[green blinking], "#{' ' * 12}***")
       print_message(%i[green], 'CONGRATULATIONS!')
-      print_message(%i[green blinking], '**')
-      puts 'You broke the secret code!'
+      put_message(%i[green blinking], '***')
+      puts "#{' ' * 10}You broke the secret code!"
     else
       print "Sorry, you were unsuccessful breaking the code. Better luck next time!\nThe secret code was: "
       print_full_code(code)
@@ -55,6 +55,22 @@ class HumanPlayer < Player
   end
 
   private
+
+  def valid_guess?(guess)
+    guess.match?(/^[1-6]{4}$/)
+  end
+
+  def prompt_for_guess
+    if last_guess?
+      print_message(%i[orange blinking underline], 'Warning')
+      print ": Last guess! \u21D2  "
+    else
+      print_message(%i[underline], "Guess ##{@num_guesses}")
+      print ": Please enter a guess (eg. 1346) \u21D2  "
+    end
+
+    gets.chomp
+  end
 
   def last_guess?
     @num_guesses == @max_guesses
