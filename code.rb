@@ -2,6 +2,8 @@
 
 # stores the selected code and provides related functionality
 class Code
+  attr_reader :code
+
   def initialize(secret_code)
     @code = secret_code
   end

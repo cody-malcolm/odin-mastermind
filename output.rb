@@ -68,9 +68,23 @@ module Output
     p style(styles, message)
   end
 
+  def print_full_code(code)
+    code.chars.each { |c| print_code(c) } # TODO: look into why (&:print_code) doesn't pass argument
+  end
+
   # prints the code with a colored background, and a space following it
   def print_code(number)
     print "\e[#{code_key[number]}m #{number} \e[0m"
+    print ' '
+  end
+
+  def print_direct_match
+    print "\e[7m \e[0m"
+    print ' '
+  end
+
+  def print_indirect_match
+    print '[]'
     print ' '
   end
 end
