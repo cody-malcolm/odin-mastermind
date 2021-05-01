@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
+require_relative 'code'
+require_relative 'output'
+
 # manages the Game state for a single game
 class Game
+  include Output
   def initialize(codemaker, codebreaker)
     @code = Code.new(codemaker.pick_code)
     @player = codebreaker
@@ -24,11 +28,5 @@ class Game
 
   def guess_correct?(hint)
     hint[:direct] == 4
-  end
-
-  def display_hint(hint)
-    hint[:direct].times { print_direct_match }
-    hint[:indirect].times { print_indirect_match }
-    puts ''
   end
 end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'output'
+
 # "Abstract" superclass for HumanPlayer and CPUPlayer
 class Player
   def initialize(max_guesses)
@@ -14,6 +16,8 @@ end
 
 # Implements Human-specific functionalities
 class HumanPlayer < Player
+  include Output
+
   def initialize
     super(8)
   end
@@ -46,7 +50,7 @@ class HumanPlayer < Player
       print_message(%i[green blinking], "#{' ' * 12}***")
       print_message(%i[green], 'CONGRATULATIONS!')
       put_message(%i[green blinking], '***')
-      puts "#{' ' * 10}You broke the secret code!"
+      puts "#{' ' * 10}You broke the secret code!\n\n"
     else
       print "Sorry, you were unsuccessful breaking the code. Better luck next time!\nThe secret code was: "
       print_full_code(code)

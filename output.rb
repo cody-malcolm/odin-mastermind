@@ -41,6 +41,8 @@ module Output
       red: 31,
       green: 32,
       orange: 33,
+      blue: 94,
+      background: 40,
       blinking: 5,
       underline: 4,
       invert: 7
@@ -85,5 +87,15 @@ module Output
     hint[:indirect].times { print "\u25C7 " }
     (4 - hint[:direct] - hint[:indirect]).times { print "\u00D7 " }
     puts "\n\n"
+  end
+
+  def print_welcome_banner
+    print ' ' * 10
+    put_message(%i[invert blue background], ' ****************************** ')
+    print ' ' * 10
+    put_message(%i[invert blue background], ' *   Welcome to Mastermind!   * ')
+    print ' ' * 10
+    put_message(%i[invert blue background], ' ****************************** ')
+    puts ''
   end
 end
