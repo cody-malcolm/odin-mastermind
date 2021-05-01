@@ -23,8 +23,8 @@ class GameDriver
   private
 
   def offer_explanation
-    puts 'The explanation will go here'
-    puts ''
+    selection = prompt_for_selection(%i[y n], 'Would you like an explanation of the rules? (y/n): ')
+    puts selection == :y ? "\n#{explanation}" : "\n"
   end
 
   def prompt_for_game_type?
@@ -46,5 +46,20 @@ class GameDriver
     game = Game.new(computer, player)
 
     game.play
+  end
+
+  def prompt_for_selection(options, prompt)
+    print prompt
+    selection = gets.chomp.to_sym
+    until options.include? selection
+      puts "\nSorry, that wasn't a valid selection."
+      print prompt
+      selection = gets.chomp.to_sym
+    end
+    selection
+  end
+
+  def explanation
+    "#{game_overview}\n#{game_rules}\n#{examples}\n#{game_modes}\n"
   end
 end

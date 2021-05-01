@@ -81,6 +81,10 @@ module Output
     print ' '
   end
 
+  def code_as_string(code)
+    code.chars.map { |c| "\e[#{code_key[c]}m #{c} \e[0m" }.join(' ')
+  end
+
   def display_hint(hint)
     print 'The hint for that guess is: '
     hint[:direct].times { print "\u25C6 " }
@@ -97,5 +101,55 @@ module Output
     print ' ' * 10
     put_message(%i[invert blue background], ' ****************************** ')
     puts ''
+  end
+
+  def game_overview
+    <<~OVERVIEW
+      In Mastermind, you play against the computer to see who is better at breaking a secret code.
+    OVERVIEW
+  end
+
+  def game_rules
+    <<~RULES
+      The secret code is four numbers long and built from the following: #{code_as_string('123456')}
+
+      Duplicates are allowed, and there are 1296 total possible combinations.
+
+      In order to help break the code, after every attempt a hint will be given, as follows:
+      - A \u25C6  will be shown for every guessed number that is in the correct spot
+      - A \u25C7  will be shown for every guessed number that is in the secret code, but is in the wrong spot
+      - A \u00D7  will be shown for every number that is not present in the secret code
+
+      Note that the order these hints are displayed does #{style(%i[underline], 'not')} correspond to the order of \
+      the numbers in the guess. They are always displayed in the order: \u25C6 \u25C7 \u00D7
+
+      The human player always gets 12 attempts to break the code. The computer gets a varying number based on \
+      AI intelligence level selected.
+    RULES
+  end
+
+  def examples
+    <<~EXAMPLE
+      For example, given the secret code #{code_as_string('4456')} and the guess #{code_as_string('4154')}, the \
+      corresponding hint would be \u25C6 \u25C6 \u25C7 \u00D7, because positions 1 and 3 are correct, and the number \
+      in position 4 of the guess is present at position 2 of the secret code. There is no '1' in the code, so there \
+      is one \u00D7 displayed.
+
+      As another example, given the secret code #{code_as_string('1234')} and the guess #{code_as_string('4423')}, \
+      the corresponding hint would be \u25C7 \u25C7 \u25C7 \u00D7, because there are 3 numbers from the guess \
+      present in the code, but none of them are in the correct position.
+    EXAMPLE
+  end
+
+  def game_modes
+    <<~MODES
+      There are two game modes. Select a "single" game if you only want to play a game as the code maker or code \
+      breaker. Select a "match" game if you would like to play a match against the computer.
+
+      In a match, you will specify the number of rounds you wish to play, and for each round, you and the computer \
+      will each get a chance to 'make' and 'break' the code. Each round, you will each earn points as the code maker \
+      based on how many turns it takes for your code to be broken and AI difficulty chosen. The winner of the match \
+      is the one with the most points after all the rounds are completed.
+    MODES
   end
 end
