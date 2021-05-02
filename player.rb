@@ -24,8 +24,17 @@ class HumanPlayer < Player
   end
 
   def pick_code
-    put_message([], 'Please pick a code for the computer to guess')
-    gets.chomp
+    print 'Please pick a code for the computer to guess: '
+    selection = gets.chomp
+    until valid_guess?(selection)
+      print "That isn't a valid code. Please pick a code for the computer to guess: "
+      selection = gets.chomp
+    end
+
+    print "\nThe secret code is:        "
+    print_full_code(selection)
+    puts "\n\n"
+    selection
   end
 
   def guess_code

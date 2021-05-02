@@ -14,41 +14,34 @@ class Code
     temp_code = @code.split('')
     temp_guess = guess.split('')
 
-    # check_direct! completely removes the direct matches from both temp_code and temp_guess
-    # check_indirect's logic is predicated on this removal
-    results[:direct] = check_direct!(temp_code, temp_guess)
-    results[:indirect] = check_indirect(temp_code, temp_guess)
+    results[:direct] = calc_direct!(temp_code, temp_guess)
+    results[:indirect] = calc_indirect!(temp_code, temp_guess)
+
     results
   end
 
-  private
+  def calc_direct!(code, guess)
+    direct = 0
+    code.each_with_index do |c, i|
+      next unless guess[i] == c
 
-  # returns the number of direct matches, and strips all direct matches from both the code and the guess
-  def check_direct!(code, guess)
-    direct_matches = []
-    code.each_with_index { |c, i| direct_matches.unshift(i) if guess.slice(i) == c }
-
-    direct_matches.each do |i|
-      code.delete_at(i)
-      guess.delete_at(i)
+      code[i] = 'd'
+      guess[i] = 'd'
+      direct += 1
     end
-
-    direct_matches.length
+    direct
   end
 
-  # adds the earliest index in guess that matches the given char and isn't already in the used_guess_indices ary
-  def find_unused_index!(char, guess, used_guess_indices)
-    guess_index = nil
-    guess.each_with_index { |c, i| guess_index = i if char == c && !used_guess_indices.include?(i) }
+  def calc_indirect!(code, guess)
+    indirect = 0
 
-    used_guess_indices.push(guess_index) unless guess_index.nil?
-  end
+    code.each_with_index do |c, i|
+      next if c == 'd' || !guess.include?(c)
 
-  # returns the number of indirect matches per Mastermind rules
-  def check_indirect(code, guess)
-    used_guess_indices = []
-    code.each { |c| find_unused_index!(c, guess, used_guess_indices) }
-
-    used_guess_indices.length
+      indirect += 1
+      code[i] = 'i'
+      guess[guess.index(c)] = 'i'
+    end
+    indirect
   end
 end

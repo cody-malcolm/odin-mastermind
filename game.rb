@@ -13,6 +13,7 @@ class Game
   end
 
   def play
+    # TODO: add helper method
     guessed = false
     while @player.guesses_left? && !guessed
       guess = @player.guess_code
@@ -21,7 +22,7 @@ class Game
       guessed = guess_correct?(hint)
       if @player.is_a?(CPUPlayer)
         @player.give_hint(hint, guess)
-        sleep(1.5) unless guessed
+        sleep(1.5) unless @player.is_a?(ExpertCPUPlayer) || guessed
       end
     end
 
