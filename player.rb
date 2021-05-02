@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'output'
+require_relative 'code'
 
 # "Abstract" superclass for HumanPlayer and CPUPlayer
 class Player
@@ -77,6 +78,11 @@ end
 
 # Implements CPU-specific functionalities
 class CPUPlayer < Player
+  def initialize(max_guesses)
+    super(max_guesses)
+    @s = create_set
+  end
+
   def self.new_cpu(strength)
     case strength
     when :n then NormalCPUPlayer.new
@@ -95,6 +101,10 @@ class CPUPlayer < Player
     puts ''
   end
 
+  def give_hint(hint, guess)
+    @s.select! { |candidate| Code.new(candidate).check(guess) == hint }
+  end
+
   protected
 
   def pick_code(min_unique)
@@ -109,9 +119,23 @@ class CPUPlayer < Player
     print_full_code(code)
     code
   end
+
+  def create_set
+    s = []
+    1.upto(6) do |w|
+      1.upto(6) do |x|
+        1.upto(6) do |y|
+          1.upto(6) do |z|
+            s.push("#{w}#{x}#{y}#{z}")
+          end
+        end
+      end
+    end
+    s
+  end
 end
 
-# A fairly naive AI
+# An artifically slowed down AI
 class NormalCPUPlayer < CPUPlayer
   def initialize
     super(12)
@@ -122,11 +146,19 @@ class NormalCPUPlayer < CPUPlayer
   end
 
   def guess_code
-    super('2222')
+    case @num_guesses
+    when 0 then super('1111')
+    when 1 then super('2222')
+    when 2 then super('3333')
+    when 3 then super('4444')
+    when 4 then super('5555')
+    when 5 then super('6666')
+    else super(@s[0])
+    end
   end
 end
 
-# A moderately strong AI
+# A strong AI, with some fake initial guesses to slow it down a bit
 class StrongCPUPlayer < CPUPlayer
   def initialize
     super(8)
@@ -137,14 +169,21 @@ class StrongCPUPlayer < CPUPlayer
   end
 
   def guess_code
-    super('2222')
+    case @num_guesses
+    when 0 then super('1122')
+    when 1 then super('3344')
+    when 2 then super('5566')
+    else super(@s[0])
+    end
   end
 end
 
-# An AI that always solves the code in 5 or fewer turns
+# An AI that always solves the code in 5 or fewer turns (Knuth's algorithm)
 class ExpertCPUPlayer < CPUPlayer
   def initialize
     super(5)
+    @full_set = create_set
+    @possible_hints = generate_possible_hints
   end
 
   def pick_code
@@ -152,6 +191,37 @@ class ExpertCPUPlayer < CPUPlayer
   end
 
   def guess_code
-    super('2222')
+    selection = @num_guesses.zero? ? '1122' : apply_knuths
+
+    @full_set.delete(selection)
+
+    super(selection)
+  end
+
+  private
+
+  def generate_possible_hints
+    [
+      { direct: 0, indirect: 0 }, { direct: 1, indirect: 0 },
+      { direct: 0, indirect: 1 }, { direct: 1, indirect: 1 },
+      { direct: 0, indirect: 2 }, { direct: 1, indirect: 2 },
+      { direct: 0, indirect: 3 }, { direct: 1, indirect: 3 },
+      { direct: 0, indirect: 4 }, { direct: 2, indirect: 0 },
+      { direct: 3, indirect: 0 }, { direct: 2, indirect: 1 },
+      { direct: 4, indirect: 0 }, { direct: 2, indirect: 2 }
+    ]
+  end
+
+  def apply_knuths
+    options = {}
+    @full_set.each { |combo| options[combo] = max_possibilities(combo) }
+    minimizing_value = options.values.min
+    minimizing_combos = options.select { |_, v| v == minimizing_value }.keys
+    minimizing_combos.each { |combo| return combo if @s.include?(combo) }
+    minimizing_combos[0]
+  end
+
+  def max_possibilities(combo)
+    @possible_hints.reduce(0) { |a, h| [a, @s.select { |c| Code.new(c).check(combo) == h }.length].max }
   end
 end

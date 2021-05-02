@@ -6,6 +6,7 @@ require_relative 'output'
 # manages the Game state for a single game
 class Game
   include Output
+
   def initialize(codemaker, codebreaker)
     @code = Code.new(codemaker.pick_code)
     @player = codebreaker
@@ -13,13 +14,15 @@ class Game
 
   def play
     guessed = false
-
     while @player.guesses_left? && !guessed
       guess = @player.guess_code
       hint = @code.check(guess)
       display_hint(hint)
       guessed = guess_correct?(hint)
-      sleep(1.5) if @player.is_a?(CPUPlayer)
+      if @player.is_a?(CPUPlayer)
+        @player.give_hint(hint, guess)
+        sleep(1.5) unless guessed
+      end
     end
 
     @player.print_end_message(guessed, @code.code)
