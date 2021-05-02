@@ -222,6 +222,9 @@ class ExpertCPUPlayer < CPUPlayer
   end
 
   def max_possibilities(combo)
-    @possible_hints.reduce(0) { |a, h| [a, @s.select { |c| Code.new(c).check(combo) == h }.length].max }
+    @possible_hints.reduce(0) do |a, h|
+      num = @s.count { |c| Code.new(c).check(combo) == h }
+      a > num ? a : num
+    end
   end
 end
