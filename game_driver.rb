@@ -44,7 +44,7 @@ class GameDriver
 
   def setup_single_game
     prompt = 'Would you like to play against a (n)ormal, (s)trong, or (e)xpert computer? (n/s/e): '
-    strength = prompt_for_selection(%i[n s e], prompt)
+    strength = prompt_for_selection(%i[n s e k], prompt)
     computer = CPUPlayer.new_cpu(strength)
     puts ''
     selection = prompt_for_selection(%i[c b], 'Would you like to (c)reate the secret code, or (b)reak it? (c/b): ')

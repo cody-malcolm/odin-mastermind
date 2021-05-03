@@ -22,7 +22,7 @@ class Game
       guessed = guess_correct?(hint)
       if @player.is_a?(CPUPlayer)
         @player.give_hint(hint, guess)
-        sleep(1.5) unless @player.is_a?(ExpertCPUPlayer) || guessed
+        sleep(1.5) unless @player.is_a?(KnuthsCPUPlayer) || guessed
       end
     end
 

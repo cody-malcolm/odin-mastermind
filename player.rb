@@ -20,7 +20,7 @@ end
 # Implements Human-specific functionalities
 class HumanPlayer < Player
   def initialize
-    super(8)
+    super(12)
   end
 
   def pick_code
@@ -97,6 +97,7 @@ class CPUPlayer < Player
     when :n then NormalCPUPlayer.new
     when :s then StrongCPUPlayer.new
     when :e then ExpertCPUPlayer.new
+    when :k then KnuthsCPUPlayer.new
     end
   end
 
@@ -147,7 +148,7 @@ end
 # An artifically slowed down AI
 class NormalCPUPlayer < CPUPlayer
   def initialize
-    super(12)
+    super(9)
   end
 
   def pick_code
@@ -162,7 +163,7 @@ class NormalCPUPlayer < CPUPlayer
     when 3 then super('4444')
     when 4 then super('5555')
     when 5 then super('6666')
-    else super(@s[0])
+    else super(@s.sample)
     end
   end
 end
@@ -170,7 +171,7 @@ end
 # A strong AI, with some fake initial guesses to slow it down a bit
 class StrongCPUPlayer < CPUPlayer
   def initialize
-    super(8)
+    super(7)
   end
 
   def pick_code
@@ -182,13 +183,30 @@ class StrongCPUPlayer < CPUPlayer
     when 0 then super('1122')
     when 1 then super('3344')
     when 2 then super('5566')
-    else super(@s[0])
+    else super(@s.sample)
     end
   end
 end
 
-# An AI that always solves the code in 5 or fewer turns (Knuth's algorithm)
+# An expert AI, but without Knuth's minimax
 class ExpertCPUPlayer < CPUPlayer
+  def initialize
+    super(6)
+  end
+
+  def pick_code
+    super(4)
+  end
+
+  def guess_code
+    selection = @num_guesses.zero? ? '1122' : @s.sample
+
+    super(selection)
+  end
+end
+
+# An AI that always solves the code in 5 or fewer turns (Knuth's algorithm)
+class KnuthsCPUPlayer < CPUPlayer
   def initialize
     super(5)
     @full_set = create_set
