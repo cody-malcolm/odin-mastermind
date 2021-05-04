@@ -125,7 +125,7 @@ class CPUPlayer < Player
   def guess_code(code)
     @num_guesses += 1
 
-    print "The computer guessed:#{' ' * 6}"
+    print "Guess ##{@num_guesses}: The computer guessed: "
     print_full_code(code)
     code
   end
@@ -148,7 +148,8 @@ end
 # An artifically slowed down AI
 class NormalCPUPlayer < CPUPlayer
   def initialize
-    super(9)
+    super(8)
+    @initial_guesses = %w[1111 2222 3333 4444 5555 6666]
   end
 
   def pick_code
@@ -156,15 +157,8 @@ class NormalCPUPlayer < CPUPlayer
   end
 
   def guess_code
-    case @num_guesses
-    when 0 then super('1111')
-    when 1 then super('2222')
-    when 2 then super('3333')
-    when 3 then super('4444')
-    when 4 then super('5555')
-    when 5 then super('6666')
-    else super(@s.sample)
-    end
+    @initial_guesses.reverse.each { |g| @initial_guesses.delete(g) if @s.none? { |c| c.include?(g.slice(0)) } }
+    super(@initial_guesses.empty? ? @s.sample : @initial_guesses.slice!(rand(@initial_guesses.length)))
   end
 end
 
@@ -172,6 +166,7 @@ end
 class StrongCPUPlayer < CPUPlayer
   def initialize
     super(7)
+    @initial_guesses = %w[1122 3344 5566]
   end
 
   def pick_code
@@ -179,12 +174,11 @@ class StrongCPUPlayer < CPUPlayer
   end
 
   def guess_code
-    case @num_guesses
-    when 0 then super('1122')
-    when 1 then super('3344')
-    when 2 then super('5566')
-    else super(@s.sample)
+    @initial_guesses.reverse.each do |g|
+      @initial_guesses.delete(g) if @s.none? { |c| c.include?(g.slice(0)) || c.include?(g.slice(2)) }
     end
+
+    super(@initial_guesses.empty? ? @s.sample : @initial_guesses.slice!(rand(@initial_guesses.length)))
   end
 end
 
@@ -192,6 +186,7 @@ end
 class ExpertCPUPlayer < CPUPlayer
   def initialize
     super(6)
+    @initial_guess = %w[1122 1133 1144 1155 1166 2233 2244 2255 2266 3344 3355 3366 4455 4466 5566]
   end
 
   def pick_code
@@ -199,9 +194,7 @@ class ExpertCPUPlayer < CPUPlayer
   end
 
   def guess_code
-    selection = @num_guesses.zero? ? '1122' : @s.sample
-
-    super(selection)
+    super(@num_guesses.zero? ? @initial_guess.sample : @s.sample)
   end
 end
 
