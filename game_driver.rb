@@ -3,6 +3,7 @@
 require_relative 'output'
 require_relative 'player'
 require_relative 'game'
+require_relative 'match'
 
 # manages the flow of the application
 class GameDriver
@@ -42,11 +43,15 @@ class GameDriver
     puts 'Thank you for playing!'
   end
 
-  def setup_single_game
+  def pick_computer_level
     prompt = 'Would you like to play against a (n)ormal, (s)trong, or (e)xpert computer? (n/s/e): '
     strength = prompt_for_selection(%i[n s e k], prompt)
-    computer = CPUPlayer.new_cpu(strength)
     puts ''
+    CPUPlayer.new_cpu(strength)
+  end
+
+  def setup_single_game
+    computer = pick_computer_level
     selection = prompt_for_selection(%i[c b], 'Would you like to (c)reate the secret code, or (b)reak it? (c/b): ')
     puts ''
 
@@ -58,7 +63,12 @@ class GameDriver
   end
 
   def setup_match
-    puts 'setting up a new match'
+    computer = pick_computer_level
+    player = HumanPlayer.new
+
+    match = Match.new(computer, player)
+
+    match.play
   end
 
   def prompt_for_selection(options, prompt)

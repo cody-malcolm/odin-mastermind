@@ -7,13 +7,26 @@ require_relative 'code'
 class Player
   include Output
 
+  attr_reader :num_guesses
+
   def initialize(max_guesses)
     @max_guesses = max_guesses
-    @num_guesses = 0
+    setup
   end
 
   def guesses_left?
     @num_guesses < @max_guesses
+  end
+
+  # resets the number of guesses
+  def reset
+    setup
+  end
+
+  private
+
+  def setup
+    @num_guesses = 0
   end
 end
 
@@ -95,7 +108,13 @@ end
 class CPUPlayer < Player
   def initialize(max_guesses)
     super(max_guesses)
-    @s = create_set # s is the set of remaining possible combinations
+    setup
+  end
+
+  # resets @s
+  def reset
+    super
+    setup
   end
 
   # class method that returns an appropriate child class instance based on the parameter
@@ -137,7 +156,8 @@ class CPUPlayer < Player
   def guess_code(code)
     @num_guesses += 1
 
-    print "Guess ##{@num_guesses}: The computer guessed: "
+    print_message(%i[underline], "Guess ##{@num_guesses}")
+    print ': The computer guessed: '
     print_full_code(code)
     code
   end
@@ -148,13 +168,26 @@ class CPUPlayer < Player
     1.upto(6) { |w| 1.upto(6) { |x| 1.upto(6) { |y| 1.upto(6) { |z| s.push("#{w}#{x}#{y}#{z}") } } } }
     s
   end
+
+  private
+
+  def setup
+    super
+    @s = create_set # s is the set of remaining possible combinations
+  end
 end
 
 # An artifically slowed down AI
 class NormalCPUPlayer < CPUPlayer
   def initialize
     super(8) # this AI can fail, it occasionally requires 9 guesses with bad luck
-    @initial_guesses = %w[1111 2222 3333 4444 5555 6666]
+    setup
+  end
+
+  # resets initial_guesses
+  def reset
+    super
+    setup
   end
 
   # normal AIs can pick any possible code except '1111', '2222', ..., '6666'
@@ -175,13 +208,26 @@ class NormalCPUPlayer < CPUPlayer
     # choose initial guesses at random until all are guessed or eliminated, then choose randomly from @s
     super(@initial_guesses.empty? ? @s.sample : @initial_guesses.slice!(rand(@initial_guesses.length)))
   end
+
+  private
+
+  # set the initial guesses
+  def setup
+    super
+    @initial_guesses = %w[1111 2222 3333 4444 5555 6666]
+  end
 end
 
 # A strong AI, with some fake initial guesses to slow it down a bit
 class StrongCPUPlayer < CPUPlayer
   def initialize
     super(7)
-    @initial_guesses = %w[1122 3344 5566]
+    setup
+  end
+
+  def reset
+    super
+    setup
   end
 
   def pick_code
@@ -196,13 +242,25 @@ class StrongCPUPlayer < CPUPlayer
 
     super(@initial_guesses.empty? ? @s.sample : @initial_guesses.slice!(rand(@initial_guesses.length)))
   end
+
+  private
+
+  def setup
+    super
+    @initial_guesses = %w[1122 3344 5566]
+  end
 end
 
 # An expert AI, but without Knuth's minimax
 class ExpertCPUPlayer < CPUPlayer
   def initialize
     super(6)
-    @initial_guess = %w[1122 1133 1144 1155 1166 2233 2244 2255 2266 3344 3355 3366 4455 4466 5566]
+    setup
+  end
+
+  def reset
+    super
+    setup
   end
 
   def pick_code
@@ -213,16 +271,29 @@ class ExpertCPUPlayer < CPUPlayer
   def guess_code
     super(@num_guesses.zero? ? @initial_guess.sample : @s.sample)
   end
+
+  private
+
+  def setup
+    super
+    @initial_guess = %w[1122 1133 1144 1155 1166 2233 2244 2255 2266 3344 3355 3366 4455 4466 5566]
+  end
 end
 
-# An AI that always solves the code in 5 or fewer turns (Knuth's algorithm). Is an Easter Egg, since it's still slow
-# on repl.it
+# An AI that always solves the code in 5 or fewer turns (Knuth's algorithm). Is an Easter Egg, since it's still
+# relatively slow on repl.it
 # This fully implements Knuth's algorithm including the minimax component, as described in his 1976 paper:
 # http://www.cs.uni.edu/~wallingf/teaching/cs3530/resources/knuth-mastermind.pdf
 class KnuthsCPUPlayer < CPUPlayer
   def initialize
     super(5)
-    @full_set = create_set # separate from @s (which gets pruned), the minimax algo uses an (almost) full list of codes
+    setup
+    print_easter_egg
+  end
+
+  def reset
+    super
+    setup
   end
 
   def pick_code
@@ -262,5 +333,15 @@ class KnuthsCPUPlayer < CPUPlayer
       hint_counts[Code.new(code).check(combo)] += 1
     end
     hint_counts.values.max
+  end
+
+  def print_easter_egg
+    put_message([:orange], "Easter Egg found! Playing against super-tough Knuth's AI!")
+    puts ''
+  end
+
+  def setup
+    super
+    @full_set = create_set # separate from @s (which gets pruned), the minimax algo uses an (almost) full list of codes
   end
 end

@@ -27,6 +27,7 @@ class Game
     end
 
     @player.print_end_message(guessed, @code.code)
+    guessed ? @player.num_guesses : @player.num_guesses + 1
   end
 
   private
