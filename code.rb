@@ -20,8 +20,10 @@ class Code
     results
   end
 
+  # counts the number of matches and replaces these values with a 'd'
   def calc_direct!(code, guess)
     direct = 0
+
     code.each_with_index do |c, i|
       next unless guess[i] == c
 
@@ -29,9 +31,11 @@ class Code
       guess[i] = 'd'
       direct += 1
     end
+
     direct
   end
 
+  # counts the number of indirect matches and mutates code for each indirect match found
   def calc_indirect!(code, guess)
     indirect = 0
 

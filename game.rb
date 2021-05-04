@@ -13,18 +13,9 @@ class Game
   end
 
   def play
-    # TODO: add helper method
     guessed = false
-    while @player.guesses_left? && !guessed
-      guess = @player.guess_code
-      hint = @code.check(guess)
-      display_hint(hint)
-      guessed = guess_correct?(hint)
-      if @player.is_a?(CPUPlayer)
-        @player.give_hint(hint, guess)
-        sleep(1.5) unless @player.is_a?(KnuthsCPUPlayer) || guessed
-      end
-    end
+
+    guessed = handle_guess while @player.guesses_left? && !guessed
 
     @player.print_end_message(guessed, @code.code)
     guessed ? @player.num_guesses : @player.num_guesses + 1
@@ -34,5 +25,21 @@ class Game
 
   def guess_correct?(hint)
     hint[:direct] == 4
+  end
+
+  def handle_guess
+    guess = @player.guess_code
+
+    hint = @code.check(guess)
+    display_hint(hint)
+
+    guessed = guess_correct?(hint)
+
+    if @player.is_a?(CPUPlayer)
+      @player.give_hint(hint, guess)
+      sleep(1.5) unless @player.is_a?(KnuthsCPUPlayer) || guessed
+    end
+
+    guessed
   end
 end

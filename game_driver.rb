@@ -12,6 +12,7 @@ class GameDriver
     @quit = false
   end
 
+  # basically the main application flow
   def run
     print_welcome_banner
 
@@ -43,13 +44,16 @@ class GameDriver
     puts 'Thank you for playing!'
   end
 
+  # handles selection of a computer difficultly level, and returns a CPUPlayer object of corresponding type
   def pick_computer_level
     prompt = 'Would you like to play against a (n)ormal, (s)trong, or (e)xpert computer? (n/s/e): '
-    strength = prompt_for_selection(%i[n s e k], prompt)
+    strength = prompt_for_selection(%i[n s e k], prompt) # k = knuths is an easter egg
     puts ''
+
     CPUPlayer.new_cpu(strength)
   end
 
+  # creates and runs a single game
   def setup_single_game
     computer = pick_computer_level
     selection = prompt_for_selection(%i[c b], 'Would you like to (c)reate the secret code, or (b)reak it? (c/b): ')
@@ -62,6 +66,7 @@ class GameDriver
     game.play
   end
 
+  # creates and runs a match
   def setup_match
     computer = pick_computer_level
     player = HumanPlayer.new
@@ -71,17 +76,21 @@ class GameDriver
     match.play
   end
 
+  # given a set of valid options (symbols) and a prompt, prints the prompt until user enters a valid selection
   def prompt_for_selection(options, prompt)
     print prompt
     selection = gets.chomp.to_sym
+
     until options.include? selection
       puts "\nSorry, that wasn't a valid selection."
       print prompt
       selection = gets.chomp.to_sym
     end
+
     selection
   end
 
+  # print the explanation of the game
   def explanation
     "#{game_overview}\n#{game_rules}\n#{examples}\n#{game_modes}\n"
   end
