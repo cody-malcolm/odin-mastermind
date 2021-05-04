@@ -337,6 +337,7 @@ class KnuthsCPUPlayer < CPUPlayer
 
   def print_easter_egg
     put_message([:orange], "Easter Egg found! Playing against super-tough Knuth's AI!")
+    puts 'Please be aware that the second guess may take up to 20 seconds, please be patient.'
     puts ''
   end
 

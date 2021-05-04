@@ -1,26 +1,5 @@
 # frozen_string_literal: true
 
-# 31 = red
-# 32 = green
-# 33 = orange
-# 41-47, 100-106 = white on color
-# 5 flashing
-# 7 black on white background
-# 4 single underline
-
-# 41.upto(47) { |i| puts "\e[#{i}m#{i}\e[0m" }
-# 100.upto(106) { |i| puts "\e[#{i}m#{i}\e[0m" }
-
-# puts "\e[4m\e[5m\e[31mWarning!\e[0m\e[0m\e[0m"
-#
-# text = "Warning!"
-#
-# text = style(4, text)
-# text = style(5, text)
-# text = style(31, text)
-#
-# puts text
-
 # Handles the output of command line messages
 module Output
   # convert given code into corresponding color code
@@ -28,7 +7,7 @@ module Output
     {
       '1' => 41,
       '2' => 43,
-      '3' => 102,
+      '3' => 103,
       '4' => 42,
       '5' => 44,
       '6' => 45
@@ -127,35 +106,35 @@ module Output
       - A \u00D7  will be shown for every number that is not present in the secret code
 
       Note that the order these hints are displayed does #{style(%i[underline], 'not')} correspond to the order of \
-      the numbers in the guess. They are always displayed in the order: \u25C6 \u25C7 \u00D7
+the numbers in the guess. They are always displayed in the order: \u25C6 \u25C7 \u00D7
 
       The human player always gets 12 attempts to break the code. The computer gets a varying number based on \
-      AI intelligence level selected.
+AI intelligence level selected.
     RULES
   end
 
   def examples
     <<~EXAMPLE
       For example, given the secret code #{code_as_string('4456')} and the guess #{code_as_string('4154')}, the \
-      corresponding hint would be \u25C6 \u25C6 \u25C7 \u00D7, because positions 1 and 3 are correct, and the number \
-      in position 4 of the guess is present at position 2 of the secret code. There is no '1' in the code, so there \
-      is one \u00D7 displayed.
+corresponding hint would be \u25C6 \u25C6 \u25C7 \u00D7, because positions 1 and 3 are correct, and the number \
+in position 4 of the guess is present at position 2 of the secret code. There is no '1' in the code, so there \
+is one \u00D7 displayed.
 
       As another example, given the secret code #{code_as_string('1234')} and the guess #{code_as_string('4423')}, \
-      the corresponding hint would be \u25C7 \u25C7 \u25C7 \u00D7, because there are 3 numbers from the guess \
-      present in the code, but none of them are in the correct position.
+the corresponding hint would be \u25C7 \u25C7 \u25C7 \u00D7, because there are 3 numbers from the guess \
+present in the code, but none of them are in the correct position.
     EXAMPLE
   end
 
   def game_modes
     <<~MODES
       There are two game modes. Select a "single" game if you only want to play a game as the code maker or code \
-      breaker. Select a "match" game if you would like to play a match against the computer.
+breaker. Select a "match" game if you would like to play a match against the computer.
 
       In a match, you will specify the number of rounds you wish to play, and for each round, you and the computer \
-      will each get a chance to 'make' and 'break' the code. Each round, you will each earn points as the code maker \
-      based on how many turns it takes for your code to be broken and whether or not the code was successfully \
-      broken. The winner of the match is the one with the most points after all the rounds are completed.
+will each get a chance to 'make' and 'break' the code. Each round, you will each earn points as the code maker \
+based on how many turns it takes for your code to be broken and whether or not the code was successfully \
+broken. The winner of the match is the one with the most points after all the rounds are completed.
     MODES
   end
 end
