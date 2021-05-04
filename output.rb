@@ -1,26 +1,5 @@
 # frozen_string_literal: true
 
-# 31 = red
-# 32 = green
-# 33 = orange
-# 41-47, 100-106 = white on color
-# 5 flashing
-# 7 black on white background
-# 4 single underline
-
-# 41.upto(47) { |i| puts "\e[#{i}m#{i}\e[0m" }
-# 100.upto(106) { |i| puts "\e[#{i}m#{i}\e[0m" }
-
-# puts "\e[4m\e[5m\e[31mWarning!\e[0m\e[0m\e[0m"
-#
-# text = "Warning!"
-#
-# text = style(4, text)
-# text = style(5, text)
-# text = style(31, text)
-#
-# puts text
-
 # Handles the output of command line messages
 module Output
   # convert given code into corresponding color code
