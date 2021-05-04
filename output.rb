@@ -154,8 +154,8 @@ module Output
 
       In a match, you will specify the number of rounds you wish to play, and for each round, you and the computer \
       will each get a chance to 'make' and 'break' the code. Each round, you will each earn points as the code maker \
-      based on how many turns it takes for your code to be broken and AI difficulty chosen. The winner of the match \
-      is the one with the most points after all the rounds are completed.
+      based on how many turns it takes for your code to be broken and whether or not the code was successfully \
+      broken. The winner of the match is the one with the most points after all the rounds are completed.
     MODES
   end
 end

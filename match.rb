@@ -35,7 +35,16 @@ class Match
   end
 
   def prompt_for_rounds
-    2
+    print 'How many rounds would you like to play? (1-5) '
+    num_rounds = gets.chomp
+
+    until num_rounds.match?(/^[1-5]$/)
+      print "Sorry, that wasn't a valid selection. How many rounds would you like to play? (1-5) "
+      num_rounds = gets.chomp
+    end
+
+    puts ''
+    num_rounds.to_i
   end
 
   def play_single_game(codemaker, codebreaker)
