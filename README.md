@@ -29,7 +29,7 @@ Definitely feeling vindicated after completing this project. I'm very satisfied 
 application, and with the extent of "above-and-beyond" extras implemented, such as various AI strengths and the
 ability to play matches (per Mastermind rules). I'm starting to feel comfortable with Ruby again, but this time my
 grasp of OOP is vastly stronger than what it was when I was at this part of TOP curriculum last time. When testing the
-performance of Knuth's AI on repl.it, I noticed some subtle differences in how the applications displays there
+performance of Knuth's AI on repl.it, I noticed some subtle differences in how the application displays there
 compared with my local terminal. As a result, there will be a 'master' branch in this repo optimized for the Linux
 terminal, and a 'replit' branch optimized for display on replit.
 
